@@ -35,6 +35,36 @@ leftover = re.findall(r"__[A-Z_]+__", html)
 if leftover:
     print("ERROR unresolved tokens:", set(leftover)); sys.exit(1)
 
+# template.html is an artifact-shaped fragment: the artifact platform supplies the
+# <!doctype>/<head>/<body> skeleton around it. GitHub Pages serves the file raw, so
+# without a prologue the page lands in quirks mode and — with no viewport meta — lays
+# out at 980px on a phone, which switches off every mobile rule in the stylesheet.
+# The parser closes <head> and opens <body> by itself at the first flow content.
+SITE = "https://sahil2218.github.io/findingshreya"
+FAVICON = ("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>"
+           "<text y='.9em' font-size='90'>%F0%9F%8C%BF</text></svg>")
+DESC = ("A scroll-told love letter, in seven movements — from a grey stretch, to a garden "
+        "brought back to life, to a fire on the beach under a sky full of stars.")
+
+prologue = """<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="{desc}">
+<meta name="theme-color" content="#070C11">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="{icon}">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Finding Shreya">
+<meta property="og:description" content="{desc}">
+<meta property="og:image" content="{site}/photos/hero.jpg">
+<meta property="og:url" content="{site}/">
+<meta name="twitter:card" content="summary_large_image">
+""".format(desc=DESC, icon=FAVICON, site=SITE)
+
+html = prologue + html + "\n</body>\n</html>\n"
+
 open(OUT, "w", encoding="utf-8").write(html)
 mb = os.path.getsize(OUT) / 1048576.0
 print("\n%s  ->  %.2f MB  (limit 16 MB)" % (OUT, mb))
