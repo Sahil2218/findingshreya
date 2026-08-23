@@ -1,0 +1,847 @@
+<title>Finding Shreya</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Eczar:wght@400;500;600;700&family=Karla:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,200;0,6..72,300;0,6..72,400;1,6..72,200;1,6..72,300&display=swap">
+
+<style>
+/* ===========================================================
+   Finding Shreya — a night by the sea.
+   Deliberately single-theme: this page is one committed
+   visual world (dusk into starlight), so every colour is
+   painted explicitly and no theme query applies.
+   =========================================================== */
+
+:root{
+  /* ground */
+  --ink:      #070C11;   /* near-black, biased blue-green */
+  --deep:     #0E1A24;   /* deep sea */
+  --slate:    #16232E;
+
+  /* the cold stretch */
+  --ash:      #5A6068;
+  --ash-dim:  #3B4148;
+
+  /* the fire — the one bold colour on this page */
+  --ember:    #FF7A45;
+  --glow:     #FFC27A;
+
+  /* the garden — used nowhere but the garden */
+  --leaf:     #7FA86A;
+
+  /* type */
+  --star:     #EAF0F6;
+  --sand:     #C6B098;
+  --mute:     #8794A0;
+
+  /* scale */
+  --t-hero:  clamp(3.6rem, 15vw, 12rem);
+  --t-xl:    clamp(2.05rem, 5.2vw, 4rem);
+  --t-lg:    clamp(1.35rem, 2.6vw, 1.9rem);
+  --t-body:  clamp(1.04rem, 1.35vw, 1.22rem);
+  --t-label: 0.7rem;
+
+  --ease: cubic-bezier(.22,.61,.36,1);
+  --measure: 34rem;
+
+  /* the garden, embedded once and painted twice */
+  --garden-img: url("__IMG_garden__");
+}
+
+*, *::before, *::after{ box-sizing:border-box; }
+
+html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+
+body{
+  margin:0;
+  background: var(--ink);
+  color: var(--star);
+  font-family:"Newsreader", Georgia, "Times New Roman", serif;
+  font-size: var(--t-body);
+  font-weight:300;
+  line-height:1.72;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+img{ max-width:100%; display:block; }
+
+:where(a):focus-visible,
+:where([tabindex]):focus-visible{
+  outline:2px solid var(--glow);
+  outline-offset:4px;
+  border-radius:2px;
+}
+
+/* ---------- fixed overlays ---------- */
+
+#amb{
+  position:fixed; inset:0; z-index:5;
+  pointer-events:none;
+}
+
+.grain{
+  position:fixed; inset:0; z-index:6;
+  pointer-events:none;
+  opacity:.05;
+  mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* progress hairline — the fire travelling down the page */
+.progress{
+  position:fixed; top:0; left:0; height:2px; z-index:7;
+  width:100%; transform-origin:0 50%;
+  transform:scaleX(0);
+  background:linear-gradient(90deg, var(--ember), var(--glow));
+  box-shadow:0 0 14px rgba(255,122,69,.6);
+  pointer-events:none;
+}
+
+/* ---------- movement scaffold ---------- */
+
+.mv{
+  position:relative;
+  min-height:100svh;
+  display:grid;
+  align-items:center;
+  padding:clamp(4.5rem,11vh,9rem) clamp(1.5rem,7vw,7rem);
+  isolation:isolate;
+  overflow:hidden;
+}
+
+.mv__bg{
+  position:absolute; inset:0; z-index:0;
+  overflow:hidden;
+}
+.mv__bg img{
+  width:100%; height:100%;
+  object-fit:cover;
+  transform:scale(1.14);
+  will-change:transform;
+}
+
+/* directional scrim — never a flat black wash */
+.mv__scrim{
+  position:absolute; inset:0; z-index:1;
+  pointer-events:none;
+}
+
+.mv__inner{
+  position:relative; z-index:2;
+  max-width:var(--measure);
+  display:flex;
+  flex-direction:column;
+  gap:1.45rem;
+}
+
+/* alternating anchor so the page never reads as one centred column */
+.mv--left  .mv__inner{ justify-self:start; }
+.mv--right .mv__inner{ justify-self:end; text-align:right; }
+.mv--right .mv__label{ justify-content:flex-end; }
+.mv--mid   .mv__inner{ justify-self:center; text-align:center; align-items:center; }
+
+/* ---------- type ---------- */
+
+.mv__label{
+  display:flex; align-items:center; gap:.7rem;
+  margin:0;
+  font-family:"Karla", system-ui, sans-serif;
+  font-size:var(--t-label);
+  font-weight:600;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  color:var(--glow);
+}
+.mv__label::before{
+  content:""; width:1.9rem; height:1px;
+  background:currentColor; opacity:.55; flex:none;
+}
+.mv--right .mv__label::before{ order:2; }
+
+h2{
+  margin:0;
+  font-family:"Eczar", Georgia, serif;
+  font-weight:500;
+  font-size:var(--t-xl);
+  line-height:1.1;
+  letter-spacing:-0.015em;
+  text-wrap:balance;
+  color:var(--star);
+}
+
+.mv p{
+  margin:0;
+  color:var(--sand);
+  text-wrap:pretty;
+}
+
+em{ font-style:italic; color:var(--glow); }
+
+/* ---------- 00 · hero ---------- */
+
+.hero{ text-align:center; }
+.hero .mv__scrim{
+  background:
+    linear-gradient(180deg, rgba(7,12,17,.86) 0%, rgba(7,12,17,.5) 34%, rgba(7,12,17,.12) 58%, rgba(7,12,17,.72) 100%),
+    radial-gradient(120% 80% at 50% 42%, rgba(7,12,17,0) 40%, rgba(7,12,17,.55) 100%);
+}
+
+.hero__eyebrow{
+  margin:0;
+  font-family:"Karla", system-ui, sans-serif;
+  font-size:clamp(.72rem,1.5vw,.86rem);
+  font-weight:500;
+  letter-spacing:.3em;
+  text-transform:uppercase;
+  color:var(--mute);
+}
+
+.hero__name{
+  margin:0;
+  font-family:"Eczar", Georgia, serif;
+  font-weight:600;
+  font-size:var(--t-hero);
+  line-height:.9;
+  letter-spacing:-0.035em;
+  color:var(--star);
+  text-shadow:0 0 90px rgba(255,122,69,.35), 0 2px 40px rgba(7,12,17,.9);
+}
+
+.hero__deva{
+  display:block;
+  margin-top:.55rem;
+  font-family:"Eczar","Noto Sans Devanagari", serif;
+  font-weight:400;
+  font-size:clamp(1.1rem,3vw,2rem);
+  line-height:1.4;
+  letter-spacing:.02em;
+  color:var(--glow);
+  opacity:.85;
+}
+
+.hero__lede{
+  max-width:33rem;
+  margin-inline:auto;
+  line-height:1.58;
+  color:var(--sand);
+  text-wrap:balance;
+}
+
+.cue{
+  position:absolute; left:50%; bottom:clamp(1.6rem,4vh,2.8rem); z-index:2;
+  transform:translateX(-50%);
+  display:flex; flex-direction:column; align-items:center; gap:.6rem;
+  font-family:"Karla", system-ui, sans-serif;
+  font-size:var(--t-label);
+  font-weight:500;
+  letter-spacing:.3em;
+  text-transform:uppercase;
+  color:var(--mute);
+}
+.cue__line{
+  width:1px; height:2.4rem;
+  background:linear-gradient(180deg, var(--glow), transparent);
+  animation:drop 2.4s var(--ease) infinite;
+  transform-origin:0 0;
+}
+@keyframes drop{
+  0%{ transform:scaleY(0); opacity:0; }
+  35%{ transform:scaleY(1); opacity:1; }
+  100%{ transform:scaleY(1) translateY(2.4rem); opacity:0; }
+}
+
+/* ---------- I · before (no photograph, on purpose) ---------- */
+
+.before{
+  background:
+    radial-gradient(90% 70% at 20% 30%, #131A21 0%, var(--ink) 70%);
+  min-height:92svh;
+}
+.before h2{ color:#98A2AB; font-weight:400; }
+.before p{ color:#818C96; }          /* muted, but still ~4.8:1 on this ground */
+.before .mv__label{ color:#6B757E; }
+
+/* the grey stretch, drawn — a flat horizon that goes nowhere */
+.flatline{
+  width:min(100%, 22rem);
+  height:1px;
+  background:linear-gradient(90deg, transparent, var(--ash-dim) 18%, var(--ash-dim) 82%, transparent);
+  margin-top:.6rem;
+}
+
+/* ---------- II · the garden (the wipe) ---------- */
+
+.garden{
+  min-height:100svh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:clamp(1.4rem,3vh,2.2rem);
+  padding:clamp(3.5rem,8vh,5.5rem) clamp(1.2rem,5vw,5rem);
+  background:linear-gradient(180deg, var(--ink), #0C1512 55%, var(--ink));
+}
+
+/* headline and reply sit side by side so the movement fits one screen */
+.garden__head{
+  width:100%;
+  max-width:78rem;
+  align-self:center;
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  align-items:end;
+  gap:.9rem clamp(2rem,4vw,4rem);
+}
+.garden__head .mv__label{ grid-column:1 / -1; color:var(--leaf); }
+.garden h2{ font-size:clamp(1.85rem,3.3vw,2.95rem); }
+.garden__head p{ padding-bottom:.35rem; }
+
+@media (max-width:820px){
+  .garden__head{ grid-template-columns:1fr; }
+}
+
+.wipe{
+  position:relative;
+  width:100%;
+  max-width:78rem;
+  align-self:center;
+  aspect-ratio:16/9;
+  /* the whole interaction has to sit inside one screen to be usable */
+  max-height:min(52svh, 34rem);
+  border-radius:3px;
+  overflow:hidden;
+  cursor:ew-resize;
+  touch-action:pan-y;
+  background:var(--ink);
+  box-shadow:0 30px 90px -30px rgba(0,0,0,.9), 0 0 0 1px rgba(234,240,246,.07);
+  --x:0%;
+}
+@media (max-width:640px){ .wipe{ aspect-ratio:5/4; max-height:min(46svh, 22rem); } }
+
+/* one photograph, embedded once, painted twice */
+.wipe__pane{
+  position:absolute; inset:0;
+  background-image:var(--garden-img);
+  background-size:cover;
+  background-position:center;
+}
+.wipe__pane--dead{ filter:grayscale(1) brightness(.5) contrast(1.06); }
+.wipe__pane--live{ filter:saturate(1.14) contrast(1.03) brightness(1.02); }
+
+.wipe__alive{
+  position:absolute; inset:0;
+  clip-path:inset(0 calc(100% - var(--x)) 0 0);
+}
+
+.wipe__handle{
+  position:absolute; top:0; bottom:0; left:var(--x); z-index:3;
+  width:2px; margin-left:-1px;
+  background:linear-gradient(180deg, transparent, var(--glow) 12%, var(--glow) 88%, transparent);
+  box-shadow:0 0 22px rgba(255,194,122,.75);
+  pointer-events:none;
+}
+.wipe__grip{
+  position:absolute; top:50%; left:50%; z-index:4;
+  transform:translate(-50%,-50%);
+  width:2.9rem; height:2.9rem;
+  border-radius:50%;
+  background:rgba(7,12,17,.55);
+  backdrop-filter:blur(6px);
+  border:1px solid var(--glow);
+  display:grid; place-items:center;
+  color:var(--glow);
+  font-family:"Karla", system-ui, sans-serif;
+  font-size:.8rem;
+  letter-spacing:.08em;
+}
+
+.wipe__tag{
+  position:absolute; bottom:1rem; z-index:3;
+  font-family:"Karla", system-ui, sans-serif;
+  font-size:var(--t-label);
+  font-weight:600;
+  letter-spacing:.26em;
+  text-transform:uppercase;
+  padding:.42rem .8rem;
+  border-radius:2px;
+  background:rgba(7,12,17,.5);
+  backdrop-filter:blur(4px);
+  transition:opacity .5s var(--ease);
+}
+.wipe__tag--dead{ right:1rem; color:var(--ash); }
+.wipe__tag--live{ left:1rem;  color:var(--leaf); }
+
+.wipe__hint{
+  position:absolute; left:var(--x); top:calc(50% + 2.9rem); z-index:4;
+  transform:translateX(-50%);
+  font-family:"Karla", system-ui, sans-serif;
+  font-size:var(--t-label);
+  font-weight:600;
+  letter-spacing:.24em;
+  text-transform:uppercase;
+  color:var(--glow);
+  white-space:nowrap;
+  padding:.36rem .7rem;
+  border-radius:2px;
+  background:rgba(7,12,17,.62);
+  backdrop-filter:blur(4px);
+  -webkit-backdrop-filter:blur(4px);
+  transition:opacity .45s var(--ease);
+}
+.wipe.is-touched .wipe__hint{ opacity:0; }
+
+.garden__caption{
+  align-self:center;
+  width:100%;
+  max-width:78rem;
+  margin:0;
+  color:var(--mute);
+  font-size:.95rem;
+  font-style:italic;
+}
+
+/* ---------- photographic movements ---------- */
+
+/* III — a tall frame: pull the crop down so the fire itself is actually in shot */
+.fire .mv__bg img{ object-position:50% 70%; }
+.fire .mv__scrim{
+  background:linear-gradient(100deg, rgba(7,12,17,.9) 0%, rgba(7,12,17,.62) 42%, rgba(7,12,17,.06) 78%);
+}
+/* IV — the pot: busiest, brightest frame on the page, so the scrim works hardest */
+.cook .mv__bg img{ object-position:50% 42%; }
+.cook .mv__scrim{
+  background:
+    linear-gradient(260deg, rgba(7,12,17,.95) 0%, rgba(7,12,17,.86) 30%, rgba(7,12,17,.5) 58%, rgba(7,12,17,.12) 85%),
+    linear-gradient(180deg, rgba(7,12,17,.35), rgba(7,12,17,0) 40%);
+}
+/* V — tent on the beach: glow bottom-left, text right */
+.camp .mv__scrim{
+  background:linear-gradient(255deg, rgba(7,12,17,.88) 0%, rgba(7,12,17,.5) 46%, rgba(7,12,17,0) 82%);
+}
+/* VI — the sky: text low-left under the stars */
+.sky{ align-items:end; }
+.sky .mv__scrim{
+  background:linear-gradient(180deg, rgba(7,12,17,.28) 0%, rgba(7,12,17,.1) 30%, rgba(7,12,17,.92) 88%);
+}
+/* VII — the calm: pale image, so the scrim inverts to hold dark type */
+.calm{ align-items:end; }
+.calm .mv__scrim{
+  background:linear-gradient(180deg, rgba(7,12,17,.1) 0%, rgba(7,12,17,.34) 46%, rgba(7,12,17,.93) 92%);
+}
+
+/* the closing line is the point of the whole page — let it carry */
+.calm .mv__inner p:not(.signoff){
+  font-family:"Eczar", Georgia, serif;
+  font-size:var(--t-lg);
+  font-weight:400;
+  line-height:1.4;
+  color:var(--star);
+}
+
+.signoff{
+  margin-top:.4rem;
+  font-family:"Eczar", Georgia, serif;
+  font-size:var(--t-lg);
+  font-weight:500;
+  color:var(--glow);
+  letter-spacing:.01em;
+}
+
+/* ---------- credits ---------- */
+
+.credits{
+  position:relative; z-index:2;
+  background:var(--ink);
+  padding:clamp(3rem,8vh,5rem) clamp(1.5rem,7vw,7rem);
+  border-top:1px solid rgba(234,240,246,.08);
+  display:flex; flex-direction:column; gap:.9rem;
+  font-family:"Karla", system-ui, sans-serif;
+  font-size:.78rem;
+  line-height:1.75;
+  color:#5C6874;
+}
+.credits strong{
+  font-weight:600;
+  letter-spacing:.24em;
+  text-transform:uppercase;
+  font-size:var(--t-label);
+  color:var(--mute);
+}
+.credits a{ color:#7C8894; text-decoration:none; border-bottom:1px solid rgba(124,136,148,.35); }
+.credits a:hover{ color:var(--glow); border-bottom-color:var(--glow); }
+
+/* ---------- reveal ---------- */
+
+.rv{
+  opacity:0;
+  transform:translateY(22px);
+  transition:opacity .95s var(--ease), transform .95s var(--ease);
+  transition-delay:calc(var(--i,0) * 110ms);
+}
+.rv.in{ opacity:1; transform:none; }
+
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+  .rv{ opacity:1; transform:none; transition:none; }
+  .cue__line{ animation:none; }
+  .mv__bg img{ transform:scale(1.04); }
+  *{ animation-duration:.01ms !important; transition-duration:.01ms !important; }
+}
+</style>
+
+<div class="progress" id="progress"></div>
+<canvas id="amb" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+
+<main>
+
+  <!-- ══ 00 · the destination, shown first ══ -->
+  <section class="mv mv--mid hero" data-mode="star">
+    <div class="mv__bg"><img src="__IMG_hero__" alt="A campfire burning on a dark beach beneath the Milky Way, two people sitting beside it."></div>
+    <div class="mv__scrim"></div>
+    <div class="mv__inner">
+      <p class="hero__eyebrow rv" style="--i:0">I was stressed &mdash; and then I found</p>
+      <h1 class="hero__name rv" style="--i:1">Shreya<span class="hero__deva">श्रेया</span></h1>
+      <p class="hero__lede rv" style="--i:2">Everything went quiet in the best way. This is what it feels like now &mdash; a garden that came back, a fire on the sand, and a sky with no end to it.</p>
+    </div>
+    <div class="cue rv" style="--i:3" aria-hidden="true">
+      <span>scroll</span>
+      <span class="cue__line"></span>
+    </div>
+  </section>
+
+  <!-- ══ I · before ══ -->
+  <section class="mv mv--left before" data-mode="off">
+    <div class="mv__inner">
+      <p class="mv__label rv" style="--i:0">I &middot; Before</p>
+      <h2 class="rv" style="--i:1">For a while there, I was just getting through the days.</h2>
+      <p class="rv" style="--i:2">I don't think I noticed how heavy it had gotten. You carry something long enough and it stops feeling like weight &mdash; it just becomes the weather. I wasn't unhappy exactly. I was grey. Nothing in me was growing.</p>
+      <div class="flatline rv" style="--i:3" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <!-- ══ II · the garden ══ -->
+  <section class="garden" data-mode="off">
+    <div class="garden__head">
+      <p class="mv__label rv" style="--i:0">II &middot; The garden</p>
+      <h2 class="rv" style="--i:1">My life was a green garden with dead flowers in it.</h2>
+      <p class="rv" style="--i:2">Then she turned up, and they opened again. Same garden. Same soil. Every single thing in it suddenly alive.</p>
+    </div>
+
+    <div class="wipe rv" id="wipe" style="--i:3"
+         role="slider" tabindex="0"
+         aria-label="A meadow of wildflowers. Drag, or use the arrow keys, to bring it back from grey into full colour."
+         aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="grey">
+      <div class="wipe__pane wipe__pane--dead"></div>
+      <div class="wipe__alive">
+        <div class="wipe__pane wipe__pane--live"></div>
+      </div>
+      <span class="wipe__tag wipe__tag--dead">before</span>
+      <span class="wipe__tag wipe__tag--live">now</span>
+      <div class="wipe__handle"><span class="wipe__grip" aria-hidden="true">&#8596;</span></div>
+      <span class="wipe__hint">drag me</span>
+    </div>
+
+    <p class="garden__caption rv" style="--i:4">Nothing about the garden changed. Only that she was in it.</p>
+  </section>
+
+  <!-- ══ III · the fire ══ -->
+  <section class="mv mv--left fire" data-mode="ember">
+    <div class="mv__bg"><img src="__IMG_fire__" alt="A driftwood campfire burning on an empty beach as the sun sets behind a headland."></div>
+    <div class="mv__scrim"></div>
+    <div class="mv__inner">
+      <p class="mv__label rv" style="--i:0">III &middot; The fire</p>
+      <h2 class="rv" style="--i:1">Now when I picture peace, it&rsquo;s a beach at dusk.</h2>
+      <p class="rv" style="--i:2">The tide doing its slow thing. Driftwood stacked into a pile. That first proper catch of the flame &mdash; and then the whole evening in front of us, with absolutely nothing either of us has to do.</p>
+    </div>
+  </section>
+
+  <!-- ══ IV · cooking ══ -->
+  <section class="mv mv--right cook" data-mode="ember">
+    <div class="mv__bg"><img src="__IMG_cook__" alt="A blackened pot balanced over open flames on a bed of river stones."></div>
+    <div class="mv__scrim"></div>
+    <div class="mv__inner">
+      <p class="mv__label rv" style="--i:0">IV &middot; The cooking</p>
+      <h2 class="rv" style="--i:1">And we&rsquo;d cook right there beside it.</h2>
+      <p class="rv" style="--i:2">Nothing fancy. Something warm in a battered pot, made slowly because there&rsquo;s no reason on earth to hurry. Eaten close enough to the fire that you keep having to shift back from the heat.</p>
+    </div>
+  </section>
+
+  <!-- ══ V · the camp ══ -->
+  <section class="mv mv--right camp" data-mode="star">
+    <div class="mv__bg"><img src="__IMG_camp__" alt="A tent glowing warm orange from within, pitched on a beach beside a calm dark sea under stars."></div>
+    <div class="mv__scrim"></div>
+    <div class="mv__inner">
+      <p class="mv__label rv" style="--i:0">V &middot; The camp</p>
+      <h2 class="rv" style="--i:1">A small camp, and the sea somewhere out in the dark.</h2>
+      <p class="rv" style="--i:2">You hear it more than you see it. The fire drops down to embers. She&rsquo;s right there, and there is nowhere else that either of us is supposed to be.</p>
+    </div>
+  </section>
+
+  <!-- ══ VI · the sky ══ -->
+  <section class="mv mv--left sky" data-mode="star">
+    <div class="mv__bg"><img src="__IMG_stars__" alt="A vast starfield over a dark ridge, the Milky Way arcing up from a faint amber glow on the horizon."></div>
+    <div class="mv__scrim"></div>
+    <div class="mv__inner">
+      <p class="mv__label rv" style="--i:0">VI &middot; The sky</p>
+      <h2 class="rv" style="--i:1">And then the whole thing opens up above us.</h2>
+      <p class="rv" style="--i:2">That&rsquo;s the part I keep coming back to. Lying flat on the sand next to her, saying almost nothing, with more stars overhead than the two of us know what to do with.</p>
+    </div>
+  </section>
+
+  <!-- ══ VII · now ══ -->
+  <section class="mv mv--mid calm" data-mode="star">
+    <div class="mv__bg"><img src="__IMG_calm__" alt="A long-exposure of a calm sea at dusk, the water and sky softened into pale bands of gold and blue."></div>
+    <div class="mv__scrim"></div>
+    <div class="mv__inner">
+      <p class="mv__label rv" style="--i:0">VII &middot; Now</p>
+      <h2 class="rv" style="--i:1">This is what peace looks like to me now.</h2>
+      <p class="rv" style="--i:2">It looks like her.</p>
+      <p class="signoff rv" style="--i:3">&mdash; for Shreya</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="credits">
+  <strong>Photographs</strong>
+  <p style="margin:0">__CREDITS__ &mdash; all via <a href="https://unsplash.com" target="_blank" rel="noopener">Unsplash</a>.</p>
+  <p style="margin:0">Set in Eczar &amp; Newsreader.</p>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------------------------------------------------------
+     1. reveals
+     --------------------------------------------------------- */
+  var revealables = document.querySelectorAll(".rv");
+  if (reduce || !("IntersectionObserver" in window)) {
+    revealables.forEach(function(el){ el.classList.add("in"); });
+  } else {
+    var ro = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) { e.target.classList.add("in"); ro.unobserve(e.target); }
+      });
+    }, { threshold: 0.18, rootMargin: "0px 0px -8% 0px" });
+    revealables.forEach(function(el){ ro.observe(el); });
+  }
+
+  /* ---------------------------------------------------------
+     2. the garden wipe — dead to alive
+     --------------------------------------------------------- */
+  var wipe = document.getElementById("wipe");
+  if (wipe) {
+    var pos = 0, dragging = false, swept = false;
+
+    function paint(v){
+      pos = Math.max(0, Math.min(100, v));
+      wipe.style.setProperty("--x", pos + "%");
+      wipe.setAttribute("aria-valuenow", Math.round(pos));
+      wipe.setAttribute("aria-valuetext",
+        pos < 8 ? "grey" : pos > 92 ? "fully in colour" : Math.round(pos) + "% back in colour");
+    }
+    function fromEvent(clientX){
+      var r = wipe.getBoundingClientRect();
+      paint(((clientX - r.left) / r.width) * 100);
+    }
+    function touched(){ wipe.classList.add("is-touched"); }
+
+    wipe.addEventListener("pointerdown", function(e){
+      dragging = true; swept = true; touched();
+      wipe.setPointerCapture(e.pointerId);
+      fromEvent(e.clientX);
+    });
+    wipe.addEventListener("pointermove", function(e){
+      if (dragging) { e.preventDefault(); fromEvent(e.clientX); }
+    });
+    ["pointerup","pointercancel"].forEach(function(t){
+      wipe.addEventListener(t, function(){ dragging = false; });
+    });
+    wipe.addEventListener("keydown", function(e){
+      var step = e.shiftKey ? 12 : 4, handled = true;
+      if (e.key === "ArrowRight" || e.key === "ArrowUp") paint(pos + step);
+      else if (e.key === "ArrowLeft" || e.key === "ArrowDown") paint(pos - step);
+      else if (e.key === "Home") paint(0);
+      else if (e.key === "End") paint(100);
+      else handled = false;
+      if (handled) { e.preventDefault(); swept = true; touched(); }
+    });
+
+    /* auto-sweep once, when it first comes into view */
+    function sweep(){
+      var start = null, from = pos, to = 64, dur = 2000;
+      function frame(t){
+        if (swept) return;                 /* hand over the moment they touch it */
+        if (start === null) start = t;
+        var p = Math.min(1, (t - start) / dur);
+        var eased = 1 - Math.pow(1 - p, 3);
+        paint(from + (to - from) * eased);
+        if (p < 1) requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    }
+
+    if (reduce) {
+      paint(55); touched();
+    } else if ("IntersectionObserver" in window) {
+      var wo = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if (e.isIntersecting) { wo.disconnect(); setTimeout(sweep, 420); }
+        });
+      }, { threshold: 0.45 });
+      wo.observe(wipe);
+    } else {
+      paint(55);
+    }
+  }
+
+  /* ---------------------------------------------------------
+     3. parallax + scroll progress
+     --------------------------------------------------------- */
+  var layers = [].slice.call(document.querySelectorAll(".mv__bg img"));
+  var bar = document.getElementById("progress");
+  var ticking = false;
+
+  function onScroll(){
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function(){
+      var vh = window.innerHeight;
+
+      if (bar) {
+        var doc = document.documentElement;
+        var max = doc.scrollHeight - vh;
+        bar.style.transform = "scaleX(" + (max > 0 ? Math.min(1, doc.scrollTop / max) : 0) + ")";
+      }
+
+      if (!reduce) {
+        for (var i = 0; i < layers.length; i++) {
+          var el = layers[i];
+          var r = el.parentNode.getBoundingClientRect();
+          if (r.bottom < -200 || r.top > vh + 200) continue;
+          /* -1 .. 1 across the viewport */
+          var t = (r.top + r.height / 2 - vh / 2) / vh;
+          el.style.transform = "translate3d(0," + (t * -5.5).toFixed(2) + "%,0) scale(1.14)";
+        }
+      }
+      ticking = false;
+    });
+  }
+  addEventListener("scroll", onScroll, { passive: true });
+  addEventListener("resize", onScroll, { passive: true });
+  onScroll();
+
+  /* ---------------------------------------------------------
+     4. ambient particles — embers by the fire, starlight after
+     --------------------------------------------------------- */
+  var cv = document.getElementById("amb");
+  var ctx = cv.getContext("2d");
+  var W = 0, H = 0, DPR = 1, parts = [], mode = "star", running = false;
+
+  function size(){
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    W = cv.width  = Math.floor(innerWidth  * DPR);
+    H = cv.height = Math.floor(innerHeight * DPR);
+    cv.style.width  = innerWidth + "px";
+    cv.style.height = innerHeight + "px";
+  }
+  size();
+  addEventListener("resize", function(){ size(); parts = []; }, { passive: true });
+
+  function rnd(a, b){ return a + Math.random() * (b - a); }
+
+  function spawn(kind){
+    if (kind === "ember") {
+      return { k:"ember",
+        x: rnd(0, W), y: rnd(H * 0.75, H * 1.1),
+        vx: rnd(-0.14, 0.14) * DPR, vy: rnd(-0.5, -0.16) * DPR,
+        r: rnd(0.7, 2.1) * DPR, life: 0, max: rnd(320, 720),
+        ph: rnd(0, 6.28), sway: rnd(0.004, 0.014) };
+    }
+    return { k:"star",
+      x: rnd(0, W), y: rnd(0, H),
+      vx: rnd(-0.05, 0.05) * DPR, vy: rnd(-0.035, 0.035) * DPR,
+      r: rnd(0.4, 1.25) * DPR, life: 0, max: rnd(600, 1400),
+      ph: rnd(0, 6.28), sway: 0 };
+    }
+
+  function target(){
+    if (mode === "off") return 0;
+    return mode === "ember" ? 74 : 120;
+  }
+
+  function step(){
+    running = true;
+    ctx.clearRect(0, 0, W, H);
+
+    var want = target();
+    var kind = mode === "ember" ? "ember" : "star";
+    if (parts.length < want) {
+      for (var n = 0; n < 2 && parts.length < want; n++) parts.push(spawn(mode));
+    }
+
+    for (var i = parts.length - 1; i >= 0; i--) {
+      var p = parts[i];
+      /* age out fast when the movement has changed: nothing drifts in the grey
+         stretch, and embers must not linger over the calm at the end */
+      p.life += (want === 0 || p.k !== kind) ? 9 : 1;
+      if (p.life > p.max || p.y < -40 || parts.length > want + 40) { parts.splice(i, 1); continue; }
+
+      p.ph += 0.03;
+      p.x += p.vx + (p.sway ? Math.sin(p.ph) * p.sway * DPR * 6 : 0);
+      p.y += p.vy;
+
+      /* fade in, hold, fade out */
+      var q = p.life / p.max;
+      var a = q < 0.14 ? q / 0.14 : (q > 0.7 ? (1 - q) / 0.3 : 1);
+
+      if (p.k === "ember") {
+        a *= 0.55 + Math.sin(p.ph * 1.7) * 0.28;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, 6.2832);
+        ctx.fillStyle = "rgba(255," + Math.round(rnd(130, 178)) + "," + Math.round(rnd(70, 108)) + "," + Math.max(0, a).toFixed(3) + ")";
+        ctx.shadowBlur = 9 * DPR;
+        ctx.shadowColor = "rgba(255,122,69,.85)";
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      } else {
+        a *= 0.4 + Math.sin(p.ph * 0.5) * 0.3;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, 6.2832);
+        ctx.fillStyle = "rgba(226,238,250," + Math.max(0, a).toFixed(3) + ")";
+        ctx.fill();
+      }
+    }
+
+    if (parts.length === 0 && target() === 0) { running = false; return; }
+    requestAnimationFrame(step);
+  }
+
+  /* which movement owns the screen decides the particles */
+  if (!reduce && "IntersectionObserver" in window) {
+    var sections = document.querySelectorAll("[data-mode]");
+    var mo = new IntersectionObserver(function(entries){
+      var best = null, bestRatio = 0;
+      entries.forEach(function(e){
+        if (e.intersectionRatio > bestRatio) { bestRatio = e.intersectionRatio; best = e.target; }
+      });
+      if (best && bestRatio > 0.34) {
+        mode = best.getAttribute("data-mode");
+        if (!running && mode !== "off") requestAnimationFrame(step);
+      }
+    }, { threshold: [0.35, 0.6, 0.9] });
+    sections.forEach(function(s){ mo.observe(s); });
+    requestAnimationFrame(step);
+  } else if (reduce) {
+    /* one still starfield, no motion */
+    for (var s = 0; s < 90; s++) {
+      var x = rnd(0, W), y = rnd(0, H), r = rnd(0.4, 1.3) * DPR;
+      ctx.beginPath(); ctx.arc(x, y, r, 0, 6.2832);
+      ctx.fillStyle = "rgba(226,238,250," + rnd(0.15, 0.5).toFixed(3) + ")";
+      ctx.fill();
+    }
+  }
+})();
+</script>
