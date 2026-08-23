@@ -33,7 +33,7 @@ const SHOTS = [
   const tag = process.argv[4] || 'desk';
   await page.setViewport({ width, height, deviceScaleFactor: 2 });
 
-  await page.goto('file://' + path.join(BASE, 'finding-shreya.html'), { waitUntil: 'networkidle0', timeout: 90000 });
+  await page.goto('file://' + path.join(BASE, 'index.html'), { waitUntil: 'networkidle0', timeout: 90000 });
   await page.evaluate(() => document.fonts.ready);
   await new Promise(r => setTimeout(r, 1200));
 

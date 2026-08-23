@@ -3,14 +3,14 @@
 A scroll-told love letter, in seven movements — from a grey stretch, to a garden brought
 back to life, to a fire on the beach under a sky full of stars.
 
-**Live link:** https://claude.ai/code/artifact/57a6d8b8-6a49-4b7b-b749-a74c3ab97a42
-(private until you share it from the page's share menu)
+**Live site:** https://sahil2218.github.io/findingshreya/
+**Artifact link:** https://claude.ai/code/artifact/57a6d8b8-6a49-4b7b-b749-a74c3ab97a42
 
 ---
 
 ## Just want to look at it?
 
-Double-click **`finding-shreya.html`**. It opens in any browser and needs no internet —
+Double-click **`index.html`**. It opens in any browser and needs no internet —
 every photo is baked into the file. You can email it, AirDrop it, or put it on a USB
 stick and it still works.
 
@@ -20,7 +20,7 @@ stick and it still works.
 
 ```
 finding-shreya/
-├─ finding-shreya.html      ← THE SITE. one self-contained 3.1 MB file
+├─ index.html               ← THE SITE. one self-contained 3.1 MB file
 ├─ README.md                ← this
 │
 ├─ photos/                  the 7 original photographs, full quality
@@ -39,8 +39,8 @@ finding-shreya/
 │  └─ intermediate/         earlier renders, kept for comparison
 │
 └─ source/
-   ├─ template.html         ← EDIT THIS ONE, not finding-shreya.html
-   ├─ build.py              inlines the photos → finding-shreya.html
+   ├─ template.html         ← EDIT THIS ONE, not index.html
+   ├─ build.py              inlines the photos → index.html
    ├─ final.py              re-downloads the 7 photos from Unsplash
    ├─ shoot.js              screenshots every movement (needs `npm i`)
    ├─ search.py / refind.py / fetch.py    photo-hunting helpers
@@ -58,9 +58,9 @@ finding-shreya/
    python3 ~/Desktop/finding-shreya/source/build.py
    ```
 
-   That rewrites `finding-shreya.html`. Refresh the browser and you'll see it.
+   That rewrites `index.html`. Refresh the browser and you'll see it.
 
-**Never hand-edit `finding-shreya.html`** — it's generated, and the next build overwrites it.
+**Never hand-edit `index.html`** — it's generated, and the next build overwrites it.
 
 ### Swapping a photo
 

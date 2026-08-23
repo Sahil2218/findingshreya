@@ -2,7 +2,7 @@ import base64, json, os, re, sys
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # project root (parent of source/)
 SRC  = BASE + "/source/template.html"
-OUT  = BASE + "/finding-shreya.html"
+OUT  = BASE + "/index.html"   # index.html so GitHub Pages serves it at the site root
 
 html = open(SRC, encoding="utf-8").read()
 manifest = json.load(open(BASE + "/photos/manifest.json"))
